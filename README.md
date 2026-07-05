@@ -39,10 +39,8 @@ Lesson records are served from:
 - Markdown remains the source of truth for the primary lesson content.
 - To prebuild runtime JSON and reduce first-load latency, run:
 
-```bash
 cd backend_fastapi
 python3 scripts/export_lessons_json.py
-```
 
 - This writes generated lesson files into `data/lessons.<language>.json`.
 - When those files exist, the backend now prefers them before falling back to live markdown parsing.
@@ -148,3 +146,4 @@ Important before production:
 
 - Frozen production deploy flow:
   - `/Users/kyawhtet/Documents/EDU/CS/02_Web/01_Cloud_Language/v0/DEPLOY_RUNBOOK.md`
+

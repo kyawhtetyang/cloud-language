@@ -28,12 +28,10 @@ Current behavior:
 
 ## GET `/api/health`
 Response `200`:
-```json
 {
   "status": "ok",
   "storageMode": "json | db"
 }
-```
 
 ## GET `/api/lesson-cover/:language`
 - `:language` must be `hsk1`..`hsk6` (case-insensitive input, normalized lower)
@@ -41,13 +39,9 @@ Response `200`:
 Responses:
 - `200`: image file
 - `404`:
-```json
 { "message": "Cover not found" }
-```
 - `500`:
-```json
 { "message": "Failed to load lesson cover" }
-```
 
 ## GET `/api/hsk-audio/:language/:unitCode`
 - `:language` must be `hsk1`..`hsk6`
@@ -56,13 +50,9 @@ Responses:
 Responses:
 - `200`: audio file
 - `404`:
-```json
 { "message": "Audio not found" }
-```
 - `500`:
-```json
 { "message": "Failed to load hsk audio" }
-```
 
 ## GET `/api/lessons`
 Query:
@@ -71,7 +61,6 @@ Query:
 Response `200`: array of lesson records.
 
 Lesson record shape:
-```json
 {
   "level": 1,
   "unit": 1,
@@ -94,12 +83,9 @@ Lesson record shape:
   "frameworkUnit": "number within framework level (optional)",
   "translations": "{ \"english\": \"...\", \"vietnamese\": \"...\", \"burmese\": \"...\" } (optional)"
 }
-```
 
 Error `500`:
-```json
 { "message": "Failed to load lessons" }
-```
 
 ## GET `/api/progress`
 Query:
@@ -110,7 +96,6 @@ Header:
 
 Responses:
 - `200`:
-```json
 {
   "currentIndex": 0,
   "unlockedLevel": 1,
@@ -123,21 +108,13 @@ Responses:
   "isRandomLessonOrderEnabled": false,
   "isReviewQuestionsRemoved": false
 }
-```
 - `400`:
-```json
 { "message": "profileName is required" }
-```
 - `404`:
-```json
 { "message": "Progress not found" }
-```
 - `429`:
-```json
 { "message": "Too many failed profile secret attempts. Try again later." }
-```
 - `503`:
-```json
 {
   "message": "Progress storage unavailable. Configure DATABASE_URL for PostgreSQL.",
   "fallback": {
@@ -153,11 +130,9 @@ Responses:
     "isReviewQuestionsRemoved": false
   }
 }
-```
 
 ## PUT `/api/progress`
 Body:
-```json
 {
   "profileName": "required string in legacy mode, optional in Bearer mode",
   "currentIndex": 0,
@@ -171,14 +146,12 @@ Body:
   "isRandomLessonOrderEnabled": false,
   "isReviewQuestionsRemoved": false
 }
-```
 
 Header:
 - `Authorization: Bearer <supabase_access_token>` OR `X-Profile-Secret`
 
 Responses:
 - `200`:
-```json
 {
   "ok": true,
   "progress": {
@@ -194,19 +167,12 @@ Responses:
     "isReviewQuestionsRemoved": false
   }
 }
-```
 - `400`:
-```json
 { "message": "profileName is required" }
-```
 - `429`:
-```json
 { "message": "Too many failed profile secret attempts. Try again later." }
-```
 - `503`:
-```json
 { "message": "Progress storage unavailable. Configure DATABASE_URL for PostgreSQL." }
-```
 
 ## Migration Rule
 FastAPI Phase 2+ must keep:
@@ -214,3 +180,4 @@ FastAPI Phase 2+ must keep:
 - Same required params
 - Same status codes
 - Same top-level JSON keys and meanings
+

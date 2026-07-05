@@ -37,3 +37,4 @@ Expected: layout reflows correctly; still no horizontal scroll.
 
 - Pass: all checks above succeed on both iPhone and Android.
 - Fail: any side-scroll, clipping, cut-off control, or text/audio highlight mismatch.
+

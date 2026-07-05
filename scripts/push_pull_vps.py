@@ -26,8 +26,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--vps-host", default="38.54.32.58", help="VPS host (default: 38.54.32.58).")
     parser.add_argument(
         "--vps-repo",
-        default="/opt/duolingo",
-        help="Repo path on VPS (default: /opt/duolingo).",
+        default="/opt/cloudlanguage",
+        help="Repo path on VPS (default: /opt/cloudlanguage).",
     )
     parser.add_argument(
         "--skip-push",

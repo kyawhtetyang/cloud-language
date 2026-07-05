@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_DIR="${REPO_DIR:-/opt/duolingo}"
+REPO_DIR="${REPO_DIR:-/opt/cloudlanguage}"
 DEPLOY_REF="${DEPLOY_REF:-main}"
 FRONTEND_DIR="${FRONTEND_DIR:-frontend}"
-STATIC_DIR="${STATIC_DIR:-/var/www/duolingo}"
-BACKEND_SERVICE="${BACKEND_SERVICE:-duolingo-backend.service}"
+STATIC_DIR="${STATIC_DIR:-/var/www/cloudlanguage}"
+BACKEND_SERVICE="${BACKEND_SERVICE:-cloudlanguage-backend.service}"
 BACKEND_HEALTH_URL="${BACKEND_HEALTH_URL:-http://127.0.0.1:8010/api/health}"
-PUBLIC_HEALTH_URL="${PUBLIC_HEALTH_URL:-https://duolingo.kyawhtet.com/api/health}"
+PUBLIC_HEALTH_URL="${PUBLIC_HEALTH_URL:-https://cloudlanguage.kyawhtet.com/api/health}"
 BACKEND_ENV_FILE="${BACKEND_ENV_FILE:-$REPO_DIR/backend_fastapi/.env}"
 FRONTEND_ENV_FILE="${FRONTEND_ENV_FILE:-$REPO_DIR/frontend/.env.production}"
 DEPLOY_ENV_PAYLOAD_B64="${DEPLOY_ENV_PAYLOAD_B64:-}"

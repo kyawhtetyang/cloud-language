@@ -15,14 +15,12 @@ Current scope:
 
 ## Setup
 
-```bash
 cd backend_fastapi
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
 UVICORN_RELOAD=true python run.py
-```
 
 ## Notes
 - Lesson/content data defaults to `../data` (relative to `backend_fastapi`).
@@ -32,25 +30,20 @@ UVICORN_RELOAD=true python run.py
 ## Phase 4 Commands
 
 Run contract tests:
-```bash
 cd backend_fastapi
 source .venv/bin/activate
 python -m unittest tests/test_api_contract.py
-```
 
 Run content lint (mixed legacy/tagged conflicts + duplicate locale tags):
-```bash
 cd backend_fastapi
 source .venv/bin/activate
 python -m unittest tests/test_content_lint.py
-```
 
 Run route parity against another backend endpoint:
-```bash
 cd backend_fastapi
 source .venv/bin/activate
 python scripts/parity_check.py --express http://localhost:4000 --fastapi http://localhost:4001
-```
 
 See full cutover steps:
 - `backend_fastapi/SWITCHOVER_CHECKLIST.md`
+

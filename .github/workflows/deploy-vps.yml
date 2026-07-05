@@ -1,0 +1,85 @@
+name: Deploy VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-vps-main
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Configure SSH
+        shell: bash
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_vps
+          chmod 600 ~/.ssh/id_vps
+          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy On VPS
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          REPO_DIR: ${{ vars.VPS_REPO_DIR }}
+          DEPLOY_REF: ${{ github.ref_name }}
+          BACKEND_SERVICE: ${{ vars.VPS_BACKEND_SERVICE }}
+          PUBLIC_HEALTH_URL: ${{ vars.VPS_PUBLIC_HEALTH_URL }}
+          STATIC_DIR: ${{ vars.VPS_STATIC_DIR }}
+          BACKEND_ENV_FILE: ${{ vars.VPS_BACKEND_ENV_FILE }}
+          FRONTEND_ENV_FILE: ${{ vars.VPS_FRONTEND_ENV_FILE }}
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_JWT_SECRET: ${{ secrets.SUPABASE_JWT_SECRET }}
+          SUPABASE_JWT_ISSUER: ${{ vars.SUPABASE_JWT_ISSUER }}
+          SUPABASE_JWT_AUDIENCE: ${{ vars.SUPABASE_JWT_AUDIENCE }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+        run: |
+          set -euo pipefail
+          : "${REPO_DIR:=/opt/duolingo}"
+          : "${BACKEND_SERVICE:=duolingo-backend.service}"
+          : "${PUBLIC_HEALTH_URL:=https://duolingo.kyawhtet.com/api/health}"
+          : "${STATIC_DIR:=/var/www/duolingo}"
+          : "${BACKEND_ENV_FILE:=${REPO_DIR}/backend_fastapi/.env}"
+          : "${FRONTEND_ENV_FILE:=${REPO_DIR}/frontend/.env.production}"
+          : "${SUPABASE_JWT_AUDIENCE:=authenticated}"
+
+          DEPLOY_ENV_PAYLOAD_FILE="$(mktemp)"
+          add_env_line() {
+            local key="$1"
+            local value="$2"
+            if [[ -n "$value" ]]; then
+              printf '%s=%s\n' "$key" "$value" >> "$DEPLOY_ENV_PAYLOAD_FILE"
+            fi
+          }
+
+          if [[ -z "${SUPABASE_ANON_KEY}" ]]; then
+            SUPABASE_ANON_KEY="${VITE_SUPABASE_ANON_KEY}"
+          fi
+
+          add_env_line "SUPABASE_URL" "${SUPABASE_URL}"
+          add_env_line "SUPABASE_ANON_KEY" "${SUPABASE_ANON_KEY}"
+          add_env_line "SUPABASE_JWT_SECRET" "${SUPABASE_JWT_SECRET}"
+          add_env_line "SUPABASE_JWT_ISSUER" "${SUPABASE_JWT_ISSUER}"
+          add_env_line "SUPABASE_JWT_AUDIENCE" "${SUPABASE_JWT_AUDIENCE}"
+          add_env_line "VITE_SUPABASE_URL" "${VITE_SUPABASE_URL}"
+          add_env_line "VITE_SUPABASE_ANON_KEY" "${VITE_SUPABASE_ANON_KEY}"
+          add_env_line "VITE_API_BASE_URL" "${VITE_API_BASE_URL}"
+          DEPLOY_ENV_PAYLOAD_B64="$(base64 -w 0 "$DEPLOY_ENV_PAYLOAD_FILE")"
+          rm -f "$DEPLOY_ENV_PAYLOAD_FILE"
+
+          ssh -i ~/.ssh/id_vps -o IdentitiesOnly=yes "${VPS_USER}@${VPS_HOST}" \
+            "REPO_DIR='${REPO_DIR}' DEPLOY_REF='${DEPLOY_REF}' BACKEND_SERVICE='${BACKEND_SERVICE}' STATIC_DIR='${STATIC_DIR}' PUBLIC_HEALTH_URL='${PUBLIC_HEALTH_URL}' BACKEND_ENV_FILE='${BACKEND_ENV_FILE}' FRONTEND_ENV_FILE='${FRONTEND_ENV_FILE}' DEPLOY_ENV_PAYLOAD_B64='${DEPLOY_ENV_PAYLOAD_B64}' bash '${REPO_DIR}/scripts/deploy_vps.sh'"

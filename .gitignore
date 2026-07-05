@@ -32,3 +32,4 @@ data/HSK Chinese/**/*.ogg
 # Ignore full HSK audio asset directories (including manifests)
 data/HSK Chinese/audio. HSK*/
 data/HSK Chinese/audio. SPLIT_HSK*/
+
