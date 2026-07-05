@@ -1,0 +1,28 @@
+databases:
+  - name: cloudlanguage-postgres
+    databaseName: cloudlanguage
+    user: cloudlanguage
+
+services:
+  - type: web
+    name: cloudlanguage-backend-fastapi
+    runtime: python
+    rootDir: backend_fastapi
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: STORAGE_MODE
+        value: db
+      - key: PGSSL
+        value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cloudlanguage-postgres
+          property: connectionString
+      - key: DATA_DIR
+        value: ../data
+      - key: DEFAULT_LANGUAGE
+        value: english
+      - key: FRONTEND_ORIGIN
+        value: https://duolingo.kyawhtet.com,https://frontend-nine-xi-21.vercel.app

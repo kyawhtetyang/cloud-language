@@ -1,0 +1,34 @@
+.DS_Store
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend_fastapi/.venv/
+__pycache__/
+*.pyc
+
+# Build output
+dist/
+frontend/dist/
+
+# Local env
+.env
+.env.*
+*.local
+!.env.example
+!backend_fastapi/.env.example
+!frontend/.env.example
+
+# Personal/local tooling folder
+__install/
+
+# Large local HSK audio assets (keep out of git)
+data/HSK Chinese/**/*.mp3
+data/HSK Chinese/**/*.wav
+data/HSK Chinese/**/*.m4a
+data/HSK Chinese/**/*.aac
+data/HSK Chinese/**/*.ogg
+
+# Ignore full HSK audio asset directories (including manifests)
+data/HSK Chinese/audio. HSK*/
+data/HSK Chinese/audio. SPLIT_HSK*/
